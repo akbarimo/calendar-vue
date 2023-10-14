@@ -1,17 +1,33 @@
 <script setup>
+import { reactive } from 'vue';
+import dayjs from 'dayjs';
 import { generateCalendarDates, months, days } from './utils/calendar';
+const currentDate = dayjs();
 const dates = generateCalendarDates();
+const today = reactive(currentDate);
 </script>
 <template>
   <main>
     <div class="wrapper">
-      <div class="days-container">
-        <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
-      </div>
-      <div class="days-container">
-        <div class="dates" v-for="date in dates" :key="date.date">
-          <h1 :class="{ notCurrentMonth: !date.currentMonth }">{{ date.date.date() }}</h1>
+      <div class="calendar-wrapper">
+        <div>{{ months[today.month()] }}, {{ today.year() }}</div>
+        <div class="days-container days-of-week">
+          <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
         </div>
+        <div class="days-container">
+          <div class="dates" v-for="date in dates" :key="date.date">
+            <h1
+              class="date-cell"
+              :class="{ notCurrentMonth: !date.currentMonth, isToday: date.today }"
+            >
+              {{ date.date.date() }}
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div class="event-container">
+        <h3>Schedule for Fri Oct 13 2023</h3>
+        <p>No meetings for today</p>
       </div>
     </div>
   </main>
@@ -19,6 +35,15 @@ const dates = generateCalendarDates();
 
 <style scoped>
 .wrapper {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  align-items: center;
+}
+.calendar-wrapper {
   width: 24rem;
   height: 24rem;
 }
@@ -27,13 +52,45 @@ const dates = generateCalendarDates();
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
+
+.event-container {
+  width: 24rem;
+  height: 24rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
 .dates {
   height: 3.5rem;
   display: grid;
   place-content: center;
+  font-size: medium;
 }
 
 .notCurrentMonth {
-  color: grey;
+  color: #8c8c8c;
+}
+
+.isToday {
+  background-color: #ff6961;
+  color: white;
+}
+
+.days-of-week {
+  color: #6b7280;
+}
+
+.date-cell {
+  height: 2.5rem;
+  width: 2.5rem;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.date-cell:hover {
+  background-color: black;
+  color: white;
 }
 </style>
