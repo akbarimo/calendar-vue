@@ -1,6 +1,8 @@
 <script setup>
 import { reactive } from 'vue';
 import dayjs from 'dayjs';
+import LeftArrow from '~icons/ic/baseline-keyboard-arrow-left';
+import RightArrow from '~icons/ic/baseline-keyboard-arrow-right';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const dates = generateCalendarDates();
@@ -10,7 +12,14 @@ const today = reactive(currentDate);
   <main>
     <div class="wrapper">
       <div class="calendar-wrapper">
-        <div>{{ months[today.month()] }}, {{ today.year() }}</div>
+        <div class="calendar-heading">
+          <h2 class="month-year">{{ months[today.month()] }}, {{ today.year() }}</h2>
+          <div class="month-changer">
+            <LeftArrow class="arrows pointer" />
+            <h2 class="pointer">Today</h2>
+            <RightArrow class="arrows pointer" />
+          </div>
+        </div>
         <div class="days-container days-of-week">
           <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
         </div>
@@ -92,5 +101,28 @@ const today = reactive(currentDate);
 .date-cell:hover {
   background-color: black;
   color: white;
+}
+.month-changer {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.calendar-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.arrows {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.month-year {
+  font-weight: 600;
 }
 </style>
