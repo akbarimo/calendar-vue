@@ -12,30 +12,47 @@ const currentDate = dayjs();
 const today = ref(currentDate);
 const selectedDate = ref();
 const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
-const eventInput = ref(localStorage.getItem(currentDate.toDate().toDateString()));
+const eventInput =
+  ref(localStorage.getItem(selectedDate?.value?.toDate()?.toDateString())) ||
+  ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 const isEditing = ref(false);
+const retrieveEvent = (date) => {
+  return localStorage.getItem(date.toDate().toDateString());
+};
+
+const removeEvent = (date) => {
+  localStorage.removeItem(date.toDate().toDateString());
+};
+
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
-  selectedEvent.value = localStorage.getItem(currentDate.toDate().toDateString());
+  selectedEvent.value = retrieveEvent(currentDate);
 };
 
-const deleteEvent = () => {
-  localStorage.removeItem(selectedDate?.value?.toDate()?.toDateString());
+const deleteEventHandler = () => {
+  if (selectedDate?.value) {
+    removeEvent(selectedDate.value);
+  } else {
+    removeEvent(currentDate.value);
+  }
   eventInput.value = '';
   selectedEvent.value = '';
 };
 
-const submitEventHandler = () => {
-  localStorage.setItem(selectedDate?.value?.toDate()?.toDateString(), eventInput.value);
+const submitEventHandler = (e) => {
+  e.preventDefault();
+  localStorage.setItem(selectedDate.value.toDate().toDateString(), eventInput.value);
   selectedEvent.value = eventInput.value;
   isEditing.value = false;
 };
 
-const dateSelecter = (date, event) => {
-  selectedDate.value = date;
+const dateSelecter = (date) => {
+  const event = retrieveEvent(date);
+  eventInput.value = event;
   selectedEvent.value = event;
+  selectedDate.value = date;
 };
 </script>
 <template>
@@ -59,16 +76,16 @@ const dateSelecter = (date, event) => {
           <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
         </div>
         <div class="days-container">
-          <div class="dates" v-for="{ date, today, currentMonth, event } in dates" :key="date">
+          <div class="dates" v-for="{ date, today, currentMonth } in dates" :key="date">
             <h1
               class="date-cell"
               :class="{
                 notCurrentMonth: !currentMonth,
                 isToday: today,
                 selected: selectedDate?.isSame(date, 'date'),
-                event,
+                event: retrieveEvent(date),
               }"
-              @click="() => dateSelecter(date, event)"
+              @click="() => dateSelecter(date)"
             >
               {{ date.date() }}
             </h1>
@@ -83,14 +100,16 @@ const dateSelecter = (date, event) => {
           <h3 class="event-title" v-else>{{ currentDate.toDate().toDateString() }} Information</h3>
           <div class="toolbar">
             <EditSymbol class="edit-symbol pointer" @click="isEditing = !isEditing" />
-            <TrashSymbol class="delete-symbol pointer" @click="deleteEvent" />
+            <TrashSymbol class="delete-symbol pointer" @click="deleteEventHandler" />
           </div>
         </div>
         <p v-if="selectedEvent">{{ selectedEvent }}</p>
         <p v-else>No events today</p>
         <div v-if="isEditing">
-          <input v-model="eventInput" placeholder="Edit Event" />
-          <button @click="submitEventHandler">Save</button>
+          <form>
+            <input v-model="eventInput" placeholder="Edit Event" />
+            <button @click="submitEventHandler">Save</button>
+          </form>
         </div>
       </div>
     </div>
