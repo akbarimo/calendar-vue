@@ -38,22 +38,17 @@ const todayClickHandler = () => {
 };
 
 const deleteEventHandler = () => {
-  if (selectedDate?.value) {
-    removeEvent(selectedDate.value);
-  } else {
-    removeEvent(currentDate);
-  }
+  removeEvent(selectedDate?.value ? selectedDate.value : currentDate);
   eventInput.value = '';
   selectedEvent.value = '';
 };
 
 const submitEventHandler = (e) => {
   e.preventDefault();
-  if (selectedDate?.value) {
-    localStorage.setItem(dateStringifier(selectedDate.value), eventInput.value);
-  } else {
-    localStorage.setItem(dateStringifier(currentDate), eventInput.value);
-  }
+  localStorage.setItem(
+    dateStringifier(selectedDate?.value ? selectedDate.value : currentDate),
+    eventInput.value,
+  );
   selectedEvent.value = eventInput.value;
   isEditing.value = false;
 };
@@ -108,7 +103,7 @@ const dateSelecter = (date) => {
           <h3 class="event-title" v-if="selectedDate">
             {{ dateStringifier(selectedDate) }} Information
           </h3>
-          <h3 class="event-title" v-else>{{ currentDate.toDate().toDateString() }} Information</h3>
+          <h3 class="event-title" v-else>{{ dateStringifier(currentDate) }} Information</h3>
           <div class="toolbar">
             <EditSymbol class="edit-symbol pointer" @click="isEditing = !isEditing" />
             <TrashSymbol class="delete-symbol pointer" @click="deleteEventHandler" />
@@ -119,7 +114,7 @@ const dateSelecter = (date) => {
         <div v-if="isEditing">
           <form>
             <input v-model="eventInput" placeholder="Edit Event" />
-            <button @keydown.esc="isEditing = !isEditing" @click="submitEventHandler">Save</button>
+            <button @click="submitEventHandler">Save</button>
           </form>
         </div>
       </div>
@@ -201,7 +196,7 @@ const dateSelecter = (date) => {
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); */
 }
 .date-cell:hover {
   background-color: #8f8980;
