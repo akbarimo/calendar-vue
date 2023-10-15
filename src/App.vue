@@ -29,10 +29,12 @@ const removeEvent = (date) => {
 };
 
 const todayClickHandler = () => {
+  const event = retrieveEvent(currentDate);
   isEditing.value = false;
   today.value = currentDate;
   selectedDate.value = currentDate;
-  selectedEvent.value = retrieveEvent(currentDate);
+  selectedEvent.value = event;
+  eventInput.value = event;
 };
 
 const deleteEventHandler = () => {
