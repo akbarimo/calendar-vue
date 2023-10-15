@@ -15,6 +15,7 @@ const dates = computed(() => generateCalendarDates(today.value.month(), today.va
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
+  selectedEvent.value = localStorage.getItem(currentDate.toDate().toDateString());
 };
 
 const dateSelecter = (date, event) => {
