@@ -2,7 +2,9 @@
 import { ref, computed } from 'vue';
 import dayjs from 'dayjs';
 import LeftArrow from '~icons/ic/baseline-keyboard-arrow-left';
+import LeftDoubleArrow from '~icons/ic/outline-keyboard-double-arrow-left';
 import RightArrow from '~icons/ic/baseline-keyboard-arrow-right';
+import RightDoubleArrow from '~icons/ic/outline-keyboard-double-arrow-right';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const today = ref(currentDate);
@@ -21,9 +23,14 @@ const todayClickHandler = () => {
         <div class="calendar-heading">
           <h2 class="month-year">{{ months[today.month()] }}, {{ today.year() }}</h2>
           <div class="month-changer">
+            <LeftDoubleArrow class="arrows pointer" @click="today = today.year(today.year() - 1)" />
             <LeftArrow class="arrows pointer" @click="today = today.month(today.month() - 1)" />
             <h2 class="pointer" @click="todayClickHandler">Today</h2>
             <RightArrow class="arrows pointer" @click="today = today.month(today.month() + 1)" />
+            <RightDoubleArrow
+              class="arrows pointer"
+              @click="today = today.year(today.year() + 1)"
+            />
           </div>
         </div>
         <div class="days-container days-of-week">
