@@ -9,10 +9,12 @@ export const generateCalendarDates = (month = dayjs().month(), year = dayjs().ye
   const calendarDates = [...Array(42)].map((_, i) => {
     const currentDate = firstDateOfMonth.add(i - firstDayOfWeek, 'day');
     const isCurrentMonth = currentDate.isSame(firstDateOfMonth, 'month');
+    const event = localStorage.getItem(currentDate.toDate().toDateString());
     return {
       date: currentDate,
       ...(isCurrentMonth && { currentMonth: true }),
       ...(isCurrentMonth && currentDate.isSame(dayjs(), 'date') && { today: true }),
+      event,
     };
   });
 

@@ -9,11 +9,17 @@ import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const today = ref(currentDate);
 const selectedDate = ref(currentDate);
+const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
+};
+
+const dateSelecter = (date, event) => {
+  selectedDate.value = date;
+  selectedEvent.value = event;
 };
 </script>
 <template>
@@ -37,15 +43,16 @@ const todayClickHandler = () => {
           <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
         </div>
         <div class="days-container">
-          <div class="dates" v-for="{ date, today, currentMonth } in dates" :key="date">
+          <div class="dates" v-for="{ date, today, currentMonth, event } in dates" :key="date">
             <h1
               class="date-cell"
               :class="{
                 notCurrentMonth: !currentMonth,
                 isToday: today,
                 selected: selectedDate.isSame(date, 'date'),
+                event,
               }"
-              @click="selectedDate = date"
+              @click="() => dateSelecter(date, event)"
             >
               {{ date.date() }}
             </h1>
@@ -54,7 +61,7 @@ const todayClickHandler = () => {
       </div>
       <div class="event-container">
         <h3>Schedule for {{ selectedDate.toDate().toDateString() }}</h3>
-        <p>No meetings for today</p>
+        <p>{{ selectedEvent }}</p>
       </div>
     </div>
   </main>
@@ -74,6 +81,22 @@ const todayClickHandler = () => {
   width: 24rem;
   height: 24rem;
 }
+
+.event {
+  position: relative;
+}
+
+.event::before {
+  content: '';
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #87ceeb;
+  border-radius: 50%;
+  position: absolute;
+  top: 0.1rem;
+  right: 0.95rem;
+}
 .days-container {
   width: 100%;
   display: grid;
@@ -91,6 +114,7 @@ const todayClickHandler = () => {
   display: grid;
   place-content: center;
   font-size: medium;
+  border-top: 0.5px solid #969696;
 }
 
 .notCurrentMonth {
