@@ -25,7 +25,7 @@ const retrieveEvent = (date) => {
 };
 
 const removeEvent = (date) => {
-  localStorage.removeItem(date.toDate().toDateString());
+  localStorage.removeItem(dateStringifier(date));
 };
 
 const todayClickHandler = () => {
@@ -39,7 +39,7 @@ const deleteEventHandler = () => {
   if (selectedDate?.value) {
     removeEvent(selectedDate.value);
   } else {
-    removeEvent(currentDate.value);
+    removeEvent(currentDate);
   }
   eventInput.value = '';
   selectedEvent.value = '';
@@ -48,9 +48,9 @@ const deleteEventHandler = () => {
 const submitEventHandler = (e) => {
   e.preventDefault();
   if (selectedDate?.value) {
-    localStorage.setItem(selectedDate.value.toDate().toDateString(), eventInput.value);
+    localStorage.setItem(dateStringifier(selectedDate.value), eventInput.value);
   } else {
-    localStorage.setItem(currentDate.value.toDate().toDateString(), eventInput.value);
+    localStorage.setItem(dateStringifier(currentDate), eventInput.value);
   }
   selectedEvent.value = eventInput.value;
   isEditing.value = false;
@@ -104,7 +104,7 @@ const dateSelecter = (date) => {
       <div class="event-container">
         <div class="event-heading">
           <h3 class="event-title" v-if="selectedDate">
-            {{ selectedDate.toDate().toDateString() }} Information
+            {{ dateStringifier(selectedDate) }} Information
           </h3>
           <h3 class="event-title" v-else>{{ currentDate.toDate().toDateString() }} Information</h3>
           <div class="toolbar">
@@ -117,7 +117,7 @@ const dateSelecter = (date) => {
         <div v-if="isEditing">
           <form>
             <input v-model="eventInput" placeholder="Edit Event" />
-            <button @click="submitEventHandler">Save</button>
+            <button @keydown.esc="isEditing = !isEditing" @click="submitEventHandler">Save</button>
           </form>
         </div>
       </div>
