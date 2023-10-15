@@ -6,7 +6,13 @@ import RightArrow from '~icons/ic/baseline-keyboard-arrow-right';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const today = ref(currentDate);
+const selectedDate = ref(currentDate);
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
+
+const todayClickHandler = () => {
+  today.value = currentDate;
+  selectedDate.value = currentDate;
+};
 </script>
 <template>
   <main>
@@ -16,7 +22,7 @@ const dates = computed(() => generateCalendarDates(today.value.month(), today.va
           <h2 class="month-year">{{ months[today.month()] }}, {{ today.year() }}</h2>
           <div class="month-changer">
             <LeftArrow class="arrows pointer" @click="today = today.month(today.month() - 1)" />
-            <h2 class="pointer" @click="today = currentDate">Today</h2>
+            <h2 class="pointer" @click="todayClickHandler">Today</h2>
             <RightArrow class="arrows pointer" @click="today = today.month(today.month() + 1)" />
           </div>
         </div>
@@ -24,18 +30,23 @@ const dates = computed(() => generateCalendarDates(today.value.month(), today.va
           <h1 class="dates" v-for="day in days" :key="day">{{ day }}</h1>
         </div>
         <div class="days-container">
-          <div class="dates" v-for="date in dates" :key="date.date">
+          <div class="dates" v-for="{ date, today, currentMonth } in dates" :key="date">
             <h1
               class="date-cell"
-              :class="{ notCurrentMonth: !date.currentMonth, isToday: date.today }"
+              :class="{
+                notCurrentMonth: !currentMonth,
+                isToday: today,
+                selected: selectedDate.isSame(date, 'date'),
+              }"
+              @click="selectedDate = date"
             >
-              {{ date.date.date() }}
+              {{ date.date() }}
             </h1>
           </div>
         </div>
       </div>
       <div class="event-container">
-        <h3>Schedule for Fri Oct 13 2023</h3>
+        <h3>Schedule for {{ selectedDate.toDate().toDateString() }}</h3>
         <p>No meetings for today</p>
       </div>
     </div>
@@ -77,6 +88,11 @@ const dates = computed(() => generateCalendarDates(today.value.month(), today.va
 
 .notCurrentMonth {
   color: #8c8c8c;
+}
+
+.selected {
+  background-color: black;
+  color: white;
 }
 
 .isToday {
