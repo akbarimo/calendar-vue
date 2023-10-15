@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 dayjs.extend(localeData);
 
+// Generates all dates for calendar based on a set number of days (42)
 export const generateCalendarDates = (month = dayjs().month(), year = dayjs().year()) => {
   const firstDateOfMonth = dayjs().year(year).month(month).startOf('month');
   const firstDayOfWeek = firstDateOfMonth.day();

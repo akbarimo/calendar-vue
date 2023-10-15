@@ -8,6 +8,7 @@ import { generateCalendarDates, months, days } from '../utils/calendar';
 import { retrieveEvent } from '../utils/functions';
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 
+// Define all incoming props
 const props = defineProps([
   'isEditing',
   'currentDate',
@@ -16,6 +17,7 @@ const props = defineProps([
   'selectedEvent',
 ]);
 
+// Define all emits for props
 const emit = defineEmits([
   'update:isEditing',
   'update:eventInput',
@@ -23,6 +25,7 @@ const emit = defineEmits([
   'update:selectedDate',
 ]);
 
+// Localize isEditing prop with getter/setter
 const isEditing = computed({
   get() {
     return props.isEditing;
@@ -32,6 +35,7 @@ const isEditing = computed({
   },
 });
 
+// Localize eventInput prop with getter/setter
 const eventInput = computed({
   get() {
     return props.eventInput;
@@ -40,6 +44,8 @@ const eventInput = computed({
     emit('update:eventInput', value);
   },
 });
+
+// Localize selectedEvent prop with getter/setter
 const selectedEvent = computed({
   get() {
     return props.selectedEvent;
@@ -49,6 +55,7 @@ const selectedEvent = computed({
   },
 });
 
+// Localize selectedDate prop with getter/setter
 const selectedDate = computed({
   get() {
     return props.selectedDate;
@@ -58,9 +65,13 @@ const selectedDate = computed({
   },
 });
 
+// Localize currentDate
 const currentDate = ref(props.currentDate);
+
+// Set today's date once
 const today = ref(currentDate);
 
+// Click Handler for clicking on "Today"
 const todayClickHandler = () => {
   const event = retrieveEvent(currentDate);
   isEditing.value = false;
@@ -69,7 +80,8 @@ const todayClickHandler = () => {
   eventInput.value = event;
 };
 
-const dateSelecter = (date) => {
+// Click Handler for selecting dates/cells within calendar
+const dateSelectHandler = (date) => {
   const event = retrieveEvent(date);
   isEditing.value = false;
   eventInput.value = event;
@@ -103,7 +115,7 @@ const dateSelecter = (date) => {
             selected: selectedDate?.isSame(date, 'date'),
             event: retrieveEvent(date),
           }"
-          @click="() => dateSelecter(date)"
+          @click="() => dateSelectHandler(date)"
         >
           {{ date.date() }}
         </h1>

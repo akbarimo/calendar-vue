@@ -2,8 +2,9 @@
 import { defineProps, ref, computed } from 'vue';
 import EditSymbol from '~icons/material-symbols/edit';
 import TrashSymbol from '~icons/material-symbols/delete-outline';
-import { dateStringifier } from '../utils/functions';
+import { dateStringifier, removeEvent } from '../utils/functions';
 
+// Define all incoming props
 const props = defineProps([
   'isEditing',
   'currentDate',
@@ -12,6 +13,7 @@ const props = defineProps([
   'selectedEvent',
 ]);
 
+// Define all emits for props
 const emit = defineEmits([
   'update:isEditing',
   'update:eventInput',
@@ -19,6 +21,7 @@ const emit = defineEmits([
   'update:selectedDate',
 ]);
 
+// Localize isEditing prop with getter/setter
 const isEditing = computed({
   get() {
     return props.isEditing;
@@ -28,6 +31,7 @@ const isEditing = computed({
   },
 });
 
+// Localize eventInput prop with getter/setter
 const eventInput = computed({
   get() {
     return props.eventInput;
@@ -36,6 +40,8 @@ const eventInput = computed({
     emit('update:eventInput', value);
   },
 });
+
+// Localize selectedEvent prop with getter/setter
 const selectedEvent = computed({
   get() {
     return props.selectedEvent;
@@ -45,6 +51,7 @@ const selectedEvent = computed({
   },
 });
 
+// Localize selectedDate prop with getter/setter
 const selectedDate = computed({
   get() {
     return props.selectedDate;
@@ -54,6 +61,7 @@ const selectedDate = computed({
   },
 });
 
+// Localize currentDate
 const currentDate = ref(props.currentDate);
 
 const noEventText = 'Nothing scheduled for today';
@@ -61,17 +69,15 @@ const eventTags = ref(
   localStorage.getItem(currentDate.value.toDate().toDateString().tags) || 'Important',
 );
 
-const removeEvent = (date) => {
-  localStorage.removeItem(dateStringifier(date));
-  isEditing.value = false;
-};
-
+// Handler for deleting events from calendar
 const deleteEventHandler = () => {
   removeEvent(selectedDate?.value ? selectedDate.value : currentDate.value);
   eventInput.value = '';
   selectedEvent.value = '';
+  isEditing.value = false;
 };
 
+// Handler for adding events to the calendar
 const submitEventHandler = () => {
   localStorage.setItem(
     dateStringifier(selectedDate?.value ? selectedDate.value : currentDate.value),
