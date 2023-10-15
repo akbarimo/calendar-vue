@@ -11,7 +11,7 @@ const today = ref(currentDate);
 const selectedDate = ref(currentDate);
 const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
-
+console.log(dates);
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
@@ -62,7 +62,8 @@ const dateSelecter = (date, event) => {
       </div>
       <div class="event-container">
         <h3>Schedule for {{ selectedDate.toDate().toDateString() }}</h3>
-        <p>{{ selectedEvent }}</p>
+        <p v-if="selectedEvent">{{ selectedEvent }}</p>
+        <p v-else>No events today</p>
       </div>
     </div>
   </main>

@@ -14,7 +14,7 @@ export const generateCalendarDates = (month = dayjs().month(), year = dayjs().ye
       date: currentDate,
       ...(isCurrentMonth && { currentMonth: true }),
       ...(isCurrentMonth && currentDate.isSame(dayjs(), 'date') && { today: true }),
-      event,
+      ...(event && { event }),
     };
   });
 
