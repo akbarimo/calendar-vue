@@ -8,10 +8,9 @@ import RightDoubleArrow from '~icons/ic/outline-keyboard-double-arrow-right';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const today = ref(currentDate);
-const selectedDate = ref(currentDate);
+const selectedDate = ref();
 const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
-console.log(dates);
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
@@ -50,7 +49,7 @@ const dateSelecter = (date, event) => {
               :class="{
                 notCurrentMonth: !currentMonth,
                 isToday: today,
-                selected: selectedDate.isSame(date, 'date'),
+                selected: selectedDate?.isSame(date, 'date'),
                 event,
               }"
               @click="() => dateSelecter(date, event)"
@@ -61,7 +60,8 @@ const dateSelecter = (date, event) => {
         </div>
       </div>
       <div class="event-container">
-        <h3>Schedule for {{ selectedDate.toDate().toDateString() }}</h3>
+        <h3 v-if="selectedDate">Schedule for {{ selectedDate?.toDate().toDateString() }}</h3>
+        <h3 v-else>Schedule for {{ currentDate.toDate().toDateString() }}</h3>
         <p v-if="selectedEvent">{{ selectedEvent }}</p>
         <p v-else>No events today</p>
       </div>
@@ -80,17 +80,18 @@ const dateSelecter = (date, event) => {
   align-items: center;
 }
 .calendar-wrapper {
-  width: 24rem;
-  height: 24rem;
+  width: 28rem;
+  height: 28rem;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
 }
-
 .event {
   position: relative;
 }
-
 .event::before {
   content: '';
-  display: block;
+  display: inline-block;
   width: 0.5rem;
   height: 0.5rem;
   background-color: #87ceeb;
@@ -104,12 +105,14 @@ const dateSelecter = (date, event) => {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
-
 .event-container {
-  width: 24rem;
-  height: 24rem;
+  width: 28rem;
+  height: 28rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 .dates {
   height: 3.5rem;
@@ -118,37 +121,32 @@ const dateSelecter = (date, event) => {
   font-size: medium;
   border-top: 0.5px solid #969696;
 }
-
 .notCurrentMonth {
   color: #8c8c8c;
 }
-
-.selected {
-  background-color: black;
-  color: white;
-}
-
 .isToday {
-  background-color: #ff6961;
+  background-color: #ef4b4b;
   color: white;
 }
-
-.days-of-week {
-  color: #6b7280;
+.selected {
+  background-color: #5c5853;
+  color: white;
 }
-
+.days-of-week {
+  font-weight: 600;
+}
 .date-cell {
   height: 2.5rem;
   width: 2.5rem;
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 }
-
 .date-cell:hover {
-  background-color: black;
+  background-color: #8f8980;
   color: white;
 }
 .month-changer {
@@ -156,22 +154,22 @@ const dateSelecter = (date, event) => {
   gap: 1.25rem;
   align-items: center;
 }
-
 .calendar-heading {
+  padding: 0.35rem 2rem 0.35rem 2rem;
+  height: 2rem;
   display: flex;
   justify-content: space-between;
 }
-
 .pointer {
   cursor: pointer;
 }
-
 .arrows {
   width: 1.25rem;
   height: 1.25rem;
 }
-
 .month-year {
   font-weight: 600;
+  display: flex;
+  align-items: center;
 }
 </style>
