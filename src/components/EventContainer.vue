@@ -104,7 +104,9 @@ const submitEventHandler = () => {
     </div>
     <div class="event-text">
       <div class="event-text-heading">Schedule</div>
-      <p class="event-details" v-if="selectedEvent && !isEditing">{{ selectedEvent }}</p>
+      <p class="event-details" v-if="selectedEvent && !isEditing">
+        {{ selectedEvent }}
+      </p>
       <p class="event-details" v-else-if="!isEditing">{{ noEventText }}</p>
     </div>
     <div v-if="isEditing" @keydown.esc="isEditing = !isEditing">

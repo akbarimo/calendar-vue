@@ -69,14 +69,13 @@ const selectedDate = computed({
 const currentDate = ref(props.currentDate);
 
 // Set today's date once
-const today = ref(currentDate);
+const today = ref(currentDate.value);
 
 // Click Handler for clicking on "Today"
 const todayClickHandler = () => {
-  const event = retrieveEvent(currentDate);
+  const event = retrieveEvent(currentDate.value);
   isEditing.value = false;
-  today.value = currentDate;
-  selectedEvent.value = event;
+  today.value = currentDate.value;
   eventInput.value = event;
 };
 
