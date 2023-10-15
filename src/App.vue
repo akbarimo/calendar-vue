@@ -5,16 +5,32 @@ import LeftArrow from '~icons/ic/baseline-keyboard-arrow-left';
 import LeftDoubleArrow from '~icons/ic/outline-keyboard-double-arrow-left';
 import RightArrow from '~icons/ic/baseline-keyboard-arrow-right';
 import RightDoubleArrow from '~icons/ic/outline-keyboard-double-arrow-right';
+import EditSymbol from '~icons/material-symbols/edit';
+import TrashSymbol from '~icons/material-symbols/delete-outline';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
 const today = ref(currentDate);
 const selectedDate = ref();
 const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
+const eventInput = ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
+const isEditing = ref(false);
 const todayClickHandler = () => {
   today.value = currentDate;
   selectedDate.value = currentDate;
   selectedEvent.value = localStorage.getItem(currentDate.toDate().toDateString());
+};
+
+const deleteEvent = () => {
+  localStorage.removeItem(selectedDate?.value?.toDate()?.toDateString());
+  eventInput.value = '';
+  selectedEvent.value = '';
+};
+
+const submitEventHandler = () => {
+  localStorage.setItem(selectedDate?.value?.toDate()?.toDateString(), eventInput.value);
+  selectedEvent.value = eventInput.value;
+  isEditing.value = false;
 };
 
 const dateSelecter = (date, event) => {
@@ -60,10 +76,22 @@ const dateSelecter = (date, event) => {
         </div>
       </div>
       <div class="event-container">
-        <h3 v-if="selectedDate">Schedule for {{ selectedDate?.toDate().toDateString() }}</h3>
-        <h3 v-else>Schedule for {{ currentDate.toDate().toDateString() }}</h3>
+        <div class="event-heading">
+          <h3 class="event-title" v-if="selectedDate">
+            {{ selectedDate.toDate().toDateString() }} Information
+          </h3>
+          <h3 class="event-title" v-else>{{ currentDate.toDate().toDateString() }} Information</h3>
+          <div class="toolbar">
+            <EditSymbol class="edit-symbol pointer" @click="isEditing = !isEditing" />
+            <TrashSymbol class="delete-symbol pointer" @click="deleteEvent" />
+          </div>
+        </div>
         <p v-if="selectedEvent">{{ selectedEvent }}</p>
         <p v-else>No events today</p>
+        <div v-if="isEditing">
+          <input v-model="eventInput" placeholder="Edit Event" />
+          <button @click="submitEventHandler">Save</button>
+        </div>
       </div>
     </div>
   </main>
@@ -133,7 +161,7 @@ const dateSelecter = (date, event) => {
   color: white;
 }
 .days-of-week {
-  font-weight: 600;
+  font-weight: 500;
 }
 .date-cell {
   height: 2.5rem;
@@ -159,6 +187,31 @@ const dateSelecter = (date, event) => {
   height: 2rem;
   display: flex;
   justify-content: space-between;
+}
+.event-heading {
+  padding: 0.35rem 0rem 0.35rem 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.event-title {
+  height: 2rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toolbar {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.edit-symbol {
+  color: black;
+}
+.delete-symbol {
+  color: red;
 }
 .pointer {
   cursor: pointer;
