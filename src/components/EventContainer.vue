@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import EditSymbol from '~icons/material-symbols/edit';
 import TrashSymbol from '~icons/material-symbols/delete-outline';
 import { dateStringifier, removeEvent } from '../utils/functions';
