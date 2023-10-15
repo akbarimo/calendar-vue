@@ -21,4 +21,4 @@ export const generateCalendarDates = (month = dayjs().month(), year = dayjs().ye
 
 export const months = dayjs.months();
 
-export const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+export const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
