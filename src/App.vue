@@ -47,8 +47,7 @@ const deleteEventHandler = () => {
   selectedEvent.value = '';
 };
 
-const submitEventHandler = (e) => {
-  e.preventDefault();
+const submitEventHandler = () => {
   localStorage.setItem(
     dateStringifier(selectedDate?.value ? selectedDate.value : currentDate),
     eventInput.value,
@@ -127,7 +126,7 @@ const dateSelecter = (date) => {
               v-model="eventInput"
               @keydown.enter="submitEventHandler"
               :placeholder="noEventText"
-              :maxlength="400"
+              :maxlength="430"
             />
             <button class="event-button" @click="submitEventHandler">Confirm</button>
           </div>
