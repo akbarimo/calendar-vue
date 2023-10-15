@@ -100,7 +100,7 @@ const submitEventHandler = () => {
     </div>
     <div class="tags">
       <div class="tags-title">Tags:</div>
-      <p class="tags-text">{{ eventTags }}</p>
+      <p class="tags-text" v-if="selectedEvent">{{ eventTags }}</p>
     </div>
     <div class="event-text">
       <div class="event-text-heading">Schedule</div>
