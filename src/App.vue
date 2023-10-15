@@ -32,7 +32,6 @@ const todayClickHandler = () => {
   const event = retrieveEvent(currentDate);
   isEditing.value = false;
   today.value = currentDate;
-  selectedDate.value = currentDate;
   selectedEvent.value = event;
   eventInput.value = event;
 };
@@ -159,7 +158,7 @@ const dateSelecter = (date) => {
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .event-container {
-  width: 28rem;
+  width: 20rem;
   height: 28rem;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -220,7 +219,6 @@ const dateSelecter = (date) => {
   justify-content: space-between;
 }
 .event-title {
-  padding-left: 1rem;
   height: 2rem;
   width: 100%;
   display: flex;
