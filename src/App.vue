@@ -12,13 +12,16 @@ const currentDate = dayjs();
 const today = ref(currentDate);
 const selectedDate = ref();
 const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
-const eventInput =
-  ref(localStorage.getItem(selectedDate?.value?.toDate()?.toDateString())) ||
-  ref(localStorage.getItem(currentDate.toDate().toDateString()));
+const eventInput = ref(localStorage.getItem(currentDate.toDate().toDateString()));
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 const isEditing = ref(false);
+
+const dateStringifier = (date) => {
+  return date.toDate().toDateString();
+};
+
 const retrieveEvent = (date) => {
-  return localStorage.getItem(date.toDate().toDateString());
+  return localStorage.getItem(dateStringifier(date));
 };
 
 const removeEvent = (date) => {
@@ -26,6 +29,7 @@ const removeEvent = (date) => {
 };
 
 const todayClickHandler = () => {
+  isEditing.value = false;
   today.value = currentDate;
   selectedDate.value = currentDate;
   selectedEvent.value = retrieveEvent(currentDate);
@@ -43,13 +47,18 @@ const deleteEventHandler = () => {
 
 const submitEventHandler = (e) => {
   e.preventDefault();
-  localStorage.setItem(selectedDate.value.toDate().toDateString(), eventInput.value);
+  if (selectedDate?.value) {
+    localStorage.setItem(selectedDate.value.toDate().toDateString(), eventInput.value);
+  } else {
+    localStorage.setItem(currentDate.value.toDate().toDateString(), eventInput.value);
+  }
   selectedEvent.value = eventInput.value;
   isEditing.value = false;
 };
 
 const dateSelecter = (date) => {
   const event = retrieveEvent(date);
+  isEditing.value = false;
   eventInput.value = event;
   selectedEvent.value = event;
   selectedDate.value = date;
@@ -155,11 +164,11 @@ const dateSelecter = (date) => {
 .event-container {
   width: 28rem;
   height: 28rem;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 .dates {
   height: 3.5rem;
@@ -214,6 +223,7 @@ const dateSelecter = (date) => {
   justify-content: space-between;
 }
 .event-title {
+  padding-left: 1rem;
   height: 2rem;
   width: 100%;
   display: flex;
