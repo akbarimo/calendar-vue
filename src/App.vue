@@ -1,12 +1,12 @@
 <script setup>
-import { reactive } from 'vue';
+import { ref, computed } from 'vue';
 import dayjs from 'dayjs';
 import LeftArrow from '~icons/ic/baseline-keyboard-arrow-left';
 import RightArrow from '~icons/ic/baseline-keyboard-arrow-right';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
-const dates = generateCalendarDates();
-const today = reactive(currentDate);
+const today = ref(currentDate);
+const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 </script>
 <template>
   <main>
@@ -15,9 +15,9 @@ const today = reactive(currentDate);
         <div class="calendar-heading">
           <h2 class="month-year">{{ months[today.month()] }}, {{ today.year() }}</h2>
           <div class="month-changer">
-            <LeftArrow class="arrows pointer" />
-            <h2 class="pointer">Today</h2>
-            <RightArrow class="arrows pointer" />
+            <LeftArrow class="arrows pointer" @click="today = today.month(today.month() - 1)" />
+            <h2 class="pointer" @click="today = currentDate">Today</h2>
+            <RightArrow class="arrows pointer" @click="today = today.month(today.month() + 1)" />
           </div>
         </div>
         <div class="days-container days-of-week">
