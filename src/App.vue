@@ -9,10 +9,14 @@ import EditSymbol from '~icons/material-symbols/edit';
 import TrashSymbol from '~icons/material-symbols/delete-outline';
 import { generateCalendarDates, months, days } from './utils/calendar';
 const currentDate = dayjs();
+const noEventText = 'Nothing scheduled for today';
 const today = ref(currentDate);
 const selectedDate = ref();
-const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()));
-const eventInput = ref(localStorage.getItem(currentDate.toDate().toDateString()));
+const selectedEvent = ref(localStorage.getItem(currentDate.toDate().toDateString()) || '');
+const eventInput = ref(localStorage.getItem(currentDate.toDate().toDateString()) || '');
+const eventTags = ref(
+  localStorage.getItem(currentDate.toDate().toDateString().tags) || 'Important',
+);
 const dates = computed(() => generateCalendarDates(today.value.month(), today.value.year()));
 const isEditing = ref(false);
 
@@ -26,6 +30,7 @@ const retrieveEvent = (date) => {
 
 const removeEvent = (date) => {
   localStorage.removeItem(dateStringifier(date));
+  isEditing.value = false;
 };
 
 const todayClickHandler = () => {
@@ -99,22 +104,32 @@ const dateSelecter = (date) => {
       </div>
       <div class="event-container">
         <div class="event-heading">
-          <h3 class="event-title" v-if="selectedDate">
-            {{ dateStringifier(selectedDate) }} Information
-          </h3>
-          <h3 class="event-title" v-else>{{ dateStringifier(currentDate) }} Information</h3>
+          <h3 class="event-title" v-if="selectedDate">{{ dateStringifier(selectedDate) }}</h3>
+          <h3 class="event-title" v-else>{{ dateStringifier(currentDate) }}</h3>
           <div class="toolbar">
             <EditSymbol class="edit-symbol pointer" @click="isEditing = !isEditing" />
             <TrashSymbol class="delete-symbol pointer" @click="deleteEventHandler" />
           </div>
         </div>
-        <p v-if="selectedEvent">{{ selectedEvent }}</p>
-        <p v-else>No events today</p>
-        <div v-if="isEditing">
-          <form>
-            <input v-model="eventInput" placeholder="Edit Event" />
-            <button @click="submitEventHandler">Save</button>
-          </form>
+        <div class="tags">
+          <div class="tags-title">Tags:</div>
+          <p class="tags-text">{{ eventTags }}</p>
+        </div>
+        <div class="event-text">
+          <div class="event-text-heading">Schedule</div>
+          <p class="event-details" v-if="selectedEvent && !isEditing">{{ selectedEvent }}</p>
+          <p class="event-details" v-else-if="!isEditing">{{ noEventText }}</p>
+        </div>
+        <div v-if="isEditing" @keydown.esc="isEditing = !isEditing">
+          <div class="event-input">
+            <textarea
+              class="event-textarea"
+              v-model="eventInput"
+              @keydown.enter="submitEventHandler"
+              :placeholder="noEventText"
+            />
+            <button class="event-button" @click="submitEventHandler">Confirm</button>
+          </div>
         </div>
       </div>
     </div>
@@ -122,17 +137,86 @@ const dateSelecter = (date) => {
 </template>
 
 <style scoped>
+.event-text {
+  margin-top: 0.25em;
+}
+
+.event-text-heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #999999;
+  display: inline;
+}
+
+.event-details {
+  font-size: 1rem;
+  color: #555;
+  padding-bottom: 1rem;
+  padding-top: 0.5rem;
+}
+.tags {
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.tags-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.tags-text {
+  display: inline-block;
+  background-color: #e75959;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+}
+.event-details {
+  word-wrap: break-word;
+}
+.event-textarea {
+  width: 93%;
+  height: 10rem;
+  min-height: 5rem;
+  max-height: 11rem;
+  padding: 10px;
+  border: 0.15rem solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  resize: none;
+}
+.event-button {
+  margin-top: 0.8rem;
+  padding: 0.5rem 1.25rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.event-button:hover {
+  background-color: #0056b3;
+}
+.event-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+}
 .wrapper {
   display: flex;
-  gap: 2.5rem;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
   height: 100vh;
+  justify-content: center;
   align-items: center;
+  gap: 2.5rem;
 }
 .calendar-wrapper {
-  width: 28rem;
+  width: 32rem;
   height: 28rem;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -224,6 +308,8 @@ const dateSelecter = (date) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
+  color: black;
 }
 .toolbar {
   height: 2rem;
